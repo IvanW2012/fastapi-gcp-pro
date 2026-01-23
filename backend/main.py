@@ -11,7 +11,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://launch-an-app-ten.vercel.app"
+        "https://fastapi-gcp-pro-frontend.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
