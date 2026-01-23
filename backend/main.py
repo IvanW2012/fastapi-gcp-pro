@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import os
+from zoneinfo import ZoneInfo
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
@@ -48,22 +50,29 @@ async def greet(user: str):
 
 
 @app.get("/fetch_weather_today")
-async def fetch_weather_today():
+async def fetch_weather_today(
+    timezone: str | None = Query(
+        default=None,
+        description="IANA timezone (e.g. America/Los_Angeles, Europe/London). Falls back to DEFAULT_TIMEZONE env var, then America/Los_Angeles (PST/PDT)."
+    ),
+):
     """
     Fetch today's weather (mock data).
-    
+
     Returns:
-        Mock weather data with current date in m/d/y format
+        Mock weather data with current date in m/d/y format for the given timezone
     """
-    now = datetime.now()
+    tz_name = timezone or os.environ.get("DEFAULT_TIMEZONE", "America/Los_Angeles")
+    tz = ZoneInfo(tz_name)
+    now = datetime.now(tz)
     # Format date as m/d/y (removing leading zeros)
     current_date = f"{now.month}/{now.day}/{now.year}"
-    
+
     return {
         "location": "San Francisco, CA",
         "temperature": 72,
         "condition": "Sunny",
-        "date": current_date
+        "date": current_date,
     }
 
 
